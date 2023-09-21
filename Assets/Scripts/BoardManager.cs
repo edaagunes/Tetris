@@ -13,6 +13,8 @@ public class BoardManager : MonoBehaviour
 
     private Transform[,] grid;
 
+    public int completedRaw = 0;
+
     private void Awake()
     {
         grid = new Transform[width, height];
@@ -146,10 +148,12 @@ public class BoardManager : MonoBehaviour
 
     public void CleanAllLine()
     {
+        completedRaw = 0;
         for (int y = 0; y < height; y++)
         {
             if (isLineFull(y))
             {
+                completedRaw++;
                 CleanLine(y);
                 DownAllLine(y+1);
                 y--;

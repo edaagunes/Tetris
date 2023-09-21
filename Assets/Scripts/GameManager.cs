@@ -69,7 +69,12 @@ public class GameManager : MonoBehaviour
 
             if (!board.InCurrentPosition(activeShape))
             {
+                SoundManager.instance.SoundEffectRun(1);
                 activeShape.LeftMove();
+            }
+            else
+            {
+                SoundManager.instance.SoundEffectRun(3);
             }
         }
         
@@ -82,7 +87,12 @@ public class GameManager : MonoBehaviour
 
                 if (!board.InCurrentPosition(activeShape))
                 {
+                    SoundManager.instance.SoundEffectRun(1);
                     activeShape.RightMove();
+                }
+                else
+                {
+                    SoundManager.instance.SoundEffectRun(3);
                 }
         }
         
@@ -95,7 +105,12 @@ public class GameManager : MonoBehaviour
 
             if (!board.InCurrentPosition(activeShape))
             {
+                SoundManager.instance.SoundEffectRun(1);
                 activeShape.LeftMove();
+            }
+            else
+            {
+                SoundManager.instance.SoundEffectRun(3);
             }
         }
         
@@ -116,6 +131,7 @@ public class GameManager : MonoBehaviour
                         {
                             activeShape.UpMove();
                             isGameOver = true;
+                            SoundManager.instance.SoundEffectRun(6);
                         }
                         else
                         {
@@ -139,6 +155,7 @@ public class GameManager : MonoBehaviour
         activeShape.UpMove();
 
         board.InGrid(activeShape);
+        SoundManager.instance.SoundEffectRun(5);
 
         if (spawner)
         {
@@ -146,10 +163,19 @@ public class GameManager : MonoBehaviour
         }
         
         board.CleanAllLine();
+
+        if (board.completedRaw > 0)
+        {
+            if (board.completedRaw > 1)
+            {
+                SoundManager.instance.LocalSoundRun();
+            }
+            SoundManager.instance.SoundEffectRun(4);
+        }
     }
 
 
-    //Aktif shape in transform degerini tam sayiya yuvarladik,keskisnlestirdik
+    //Aktif shape in transform degerini tam sayiya yuvarladik,keskinlestirdik
     Vector2 VectorToInt(Vector2 vector)
     {
         return new Vector2(Mathf.Round(vector.x),Mathf.Round(vector.y));
