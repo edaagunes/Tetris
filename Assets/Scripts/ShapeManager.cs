@@ -52,5 +52,19 @@ public class ShapeManager : MonoBehaviour
             yield return new WaitForSeconds(.25f);
         }
     }
+
+    //Saat yonunde donsun mu fonk
+    public void RightRotateBtn(bool isRight)
+    {
+        if (isRight)
+        {
+            TurnRight();
+        }
+        else
+        {
+            TurnLeft();
+        }
+    }
+    
     
 }

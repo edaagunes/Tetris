@@ -28,8 +28,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float getdownTimer=.25f; //asagi tusa basma suresi
     private float getdownCounter;
 
-    private bool isGameOver = false;
+    public bool isGameOver = false;
+    
+    public bool isRight = true; //saat yonu mu
+    public IconManager rotateIcon;
 
+    public GameObject gameOverPanel;
     private void Start()
     {
       //  spawner = GameObject.FindGameObjectWithTag("Spawner").GetComponent<SpawnerManager>();
@@ -43,6 +47,11 @@ public class GameManager : MonoBehaviour
               activeShape = spawner.CreateShape();
               activeShape.transform.position = VectorToInt(activeShape.transform.position);
           }
+      }
+
+      if (gameOverPanel)
+      {
+          gameOverPanel.SetActive(false);
       }
       
     }
@@ -110,6 +119,12 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                isRight = !isRight;
+                if (rotateIcon)
+                {
+                    rotateIcon.IconTurn(isRight);
+                }
+                
                 SoundManager.instance.SoundEffectRun(3);
             }
         }
@@ -130,7 +145,16 @@ public class GameManager : MonoBehaviour
                         if (board.isSpillOut(activeShape))
                         {
                             activeShape.UpMove();
+                            
                             isGameOver = true;
+
+                            if (gameOverPanel)
+                            {
+                                gameOverPanel.SetActive(true);
+                                SoundManager.instance.SoundEffectRun(6);
+                            }
+                           
+                            
                             SoundManager.instance.SoundEffectRun(6);
                         }
                         else
@@ -179,5 +203,27 @@ public class GameManager : MonoBehaviour
     Vector2 VectorToInt(Vector2 vector)
     {
         return new Vector2(Mathf.Round(vector.x),Mathf.Round(vector.y));
+    }
+
+    //Icon donme yonu
+    public void RotationIconDirection()
+    {
+        isRight = !isRight;
+        activeShape.RightRotateBtn(isRight);
+
+        //gecerli sekil board disinda ise
+        if (!board.InCurrentPosition(activeShape))
+        {
+            activeShape.RightRotateBtn(!isRight);
+            SoundManager.instance.SoundEffectRun(3);
+        }
+        else
+        {
+            if (rotateIcon)
+            {
+                rotateIcon.IconTurn(isRight);
+            }
+            SoundManager.instance.SoundEffectRun(2);
+        }
     }
 }
