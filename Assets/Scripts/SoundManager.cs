@@ -20,6 +20,9 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource[] soundEffects;
 
     [SerializeField] private AudioSource[] vocalClips;
+
+    public IconManager musicIcon;
+    public IconManager fxIcon;
     private void Awake()
     {
         instance = this;
@@ -68,6 +71,7 @@ public class SoundManager : MonoBehaviour
     {
         isMusicRun = !isMusicRun;
         MusicUpdate();
+        musicIcon.IconTurn(isMusicRun);
     }
 
     public void SoundEffectRun(int whichSound)
@@ -82,6 +86,8 @@ public class SoundManager : MonoBehaviour
     public void FXTurnOff()
     {
         isEffectRun = !isEffectRun;
+        
+        fxIcon.IconTurn(isEffectRun);
     }
 
     public void LocalSoundRun()
