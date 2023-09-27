@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 { 
     SpawnerManager spawner;
     BoardManager board;
+    private ScoreManager scoreManager;
 
     private ShapeManager activeShape;
 
@@ -16,8 +17,11 @@ public class GameManager : MonoBehaviour
     [Header("Counters")]
     [Range(0.02f,1f)] //spawnTimer icin scrollbar
     [SerializeField]
-    private float downTimer=.1f; //asagi inme suresi
+    private float downTimer=.5f; //asagi inme suresi
     private float downCounter; //asagi inme sayac
+
+    private float downLevelCounter; //asagi inme level sayac
+    
     [Range(0.02f,1f)]
     [SerializeField] private float keyPressTimer=.25f; //sag sol tuslarina basma suresi
     private float keyPressCounter;
@@ -39,6 +43,7 @@ public class GameManager : MonoBehaviour
       //  spawner = GameObject.FindGameObjectWithTag("Spawner").GetComponent<SpawnerManager>();
       board = GameObject.FindObjectOfType<BoardManager>();
       spawner = GameObject.FindObjectOfType<SpawnerManager>();
+      scoreManager = GameObject.FindObjectOfType<ScoreManager>();
 
       if (spawner)
       {
@@ -53,13 +58,14 @@ public class GameManager : MonoBehaviour
       {
           gameOverPanel.SetActive(false);
       }
-      
+
+      downLevelCounter = downTimer;
     }
     
     private void Update()
     {
        
-        if (!board || !spawner || !activeShape || isGameOver)
+        if (!board || !spawner || !activeShape || isGameOver || !scoreManager)
         {
             return;
         }
@@ -130,9 +136,9 @@ public class GameManager : MonoBehaviour
         }
         
         //asagi tusuyla hizli inme
-        else if ((Input.GetKey("down") && Time.time > getdownTimer) || Time.time > downCounter)
+        else if (((Input.GetKey("down") && Time.time > getdownTimer)) || Time.time > downCounter)
         {
-                downCounter = Time.time + downTimer;
+                downCounter = Time.time + downLevelCounter;
                 getdownCounter = Time.time + getdownTimer;
 
                 if (activeShape)
@@ -190,10 +196,25 @@ public class GameManager : MonoBehaviour
 
         if (board.completedRaw > 0)
         {
-            if (board.completedRaw > 1)
+            scoreManager.RowScore(board.completedRaw);
+
+            if (scoreManager.isLevelUp)
             {
-                SoundManager.instance.LocalSoundRun();
+                SoundManager.instance.SoundEffectRun(7);
+                
+                //asagi inme suresini hizlandirma
+                downLevelCounter = downTimer - Mathf.Clamp(((float)scoreManager.level - 1) * .1f, 0.05f, 1f);
             }
+            else
+            {
+                if (board.completedRaw > 1)
+                {
+                    SoundManager.instance.LocalSoundRun();
+                }
+            }
+            
+          
+
             SoundManager.instance.SoundEffectRun(4);
         }
     }
