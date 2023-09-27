@@ -133,6 +133,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isTurn: 1
+  shapeSekil: {fileID: 21300000, guid: 33f3a64070dfc1f488c769b2ad9c5f7e, type: 3}
 --- !u!1 &4994120908111891482
 GameObject:
   m_ObjectHideFlags: 0

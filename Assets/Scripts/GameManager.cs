@@ -1,16 +1,24 @@
+
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour
 { 
     SpawnerManager spawner;
     BoardManager board;
+    FollowShapeManager followShape;
+    
     private ScoreManager scoreManager;
 
     private ShapeManager activeShape;
+    private ShapeManager holderShape;
+
+    public Image holderShapeImg;
+
+    private bool isHolderShapeChange = true;
 
     
     [FormerlySerializedAs("spawnTimer")]
@@ -38,19 +46,49 @@ public class GameManager : MonoBehaviour
     public IconManager rotateIcon;
 
     public GameObject gameOverPanel;
-    private void Start()
-    {
-      //  spawner = GameObject.FindGameObjectWithTag("Spawner").GetComponent<SpawnerManager>();
-      board = GameObject.FindObjectOfType<BoardManager>();
-      spawner = GameObject.FindObjectOfType<SpawnerManager>();
-      scoreManager = GameObject.FindObjectOfType<ScoreManager>();
 
+    private void Awake()
+    {
+        board = GameObject.FindObjectOfType<BoardManager>();
+        spawner = GameObject.FindObjectOfType<SpawnerManager>();
+        scoreManager = GameObject.FindObjectOfType<ScoreManager>();
+        followShape = GameObject.FindObjectOfType<FollowShapeManager>();
+    }
+
+    public void StartGame()
+    {
       if (spawner)
       {
+          spawner.AllShapeNull();
+          
           if (activeShape==null)
           {
               activeShape = spawner.CreateShape();
               activeShape.transform.position = VectorToInt(activeShape.transform.position);
+          }
+          
+          //eldeki sekli img ye yerlestir
+          if (holderShape==null)
+          {
+              holderShapeImg.GetComponent<CanvasGroup>().DOFade(1, .6f);
+              holderShape = spawner.CreateHolderShape();
+
+              //aktif sekil ile eldeki ayni ise tekrar spawn et
+              if (holderShape.name==activeShape.name)
+              {
+                  Destroy(holderShape.gameObject);
+                  holderShape = spawner.CreateHolderShape();
+                  
+                  holderShapeImg.sprite = holderShape.shapeSekil;
+                  holderShape.gameObject.SetActive(false);
+              }
+              else
+              {
+                  holderShapeImg.sprite = holderShape.shapeSekil;
+                  holderShape.gameObject.SetActive(false);
+              }
+              
+              
           }
       }
 
@@ -72,7 +110,21 @@ public class GameManager : MonoBehaviour
 
         InputController();
     }
-    
+
+    //takip eden sekil geriden gelsin diye lateupdate
+    private void LateUpdate()
+    {
+        if (!board || !spawner || !activeShape || isGameOver || !scoreManager || !followShape)
+        {
+            return;
+        }
+        
+        if (followShape)
+        {
+            followShape.CreateFollowShape(activeShape,board);
+        }
+    }
+
 
     private void InputController()
     {
@@ -186,10 +238,37 @@ public class GameManager : MonoBehaviour
 
         board.InGrid(activeShape);
         SoundManager.instance.SoundEffectRun(5);
+        
+        //tekrar holder degistirmek icin true
+        isHolderShapeChange = true;
 
         if (spawner)
         {
             activeShape = spawner.CreateShape();
+            
+            holderShape = spawner.CreateHolderShape();
+
+            //aktif sekil ile eldeki ayni ise tekrar spawn et
+            if (holderShape.name == activeShape.name)
+            {
+                Destroy(holderShape.gameObject);
+                holderShape = spawner.CreateHolderShape();
+                  
+                holderShapeImg.sprite = holderShape.shapeSekil;
+                holderShape.gameObject.SetActive(false);
+            }
+            else
+            {
+                holderShapeImg.sprite = holderShape.shapeSekil;
+                holderShape.gameObject.SetActive(false);
+            }
+            
+            
+        }
+
+        if (followShape)
+        {
+            followShape.ResetFnc();
         }
         
         board.CleanAllLine();
@@ -213,8 +292,6 @@ public class GameManager : MonoBehaviour
                 }
             }
             
-          
-
             SoundManager.instance.SoundEffectRun(4);
         }
     }
@@ -245,6 +322,27 @@ public class GameManager : MonoBehaviour
                 rotateIcon.IconTurn(isRight);
             }
             SoundManager.instance.SoundEffectRun(2);
+        }
+    }
+
+    //eldeki sekli aktif sekille yer degistir
+    public void ChangeHolderShape()
+    {
+        if (isHolderShapeChange)
+        {
+            isHolderShapeChange = false;
+            
+            activeShape.gameObject.SetActive(false);
+            holderShape.gameObject.SetActive(true);
+
+            holderShape.transform.position = activeShape.transform.position;
+
+            activeShape = holderShape;
+        }
+
+        if (followShape)
+        {
+            followShape.ResetFnc();
         }
     }
 }

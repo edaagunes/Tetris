@@ -120,10 +120,10 @@ TextureImporter:
       name: baslaSprite_0
       rect:
         serializedVersion: 2
-        x: 29
-        y: 19
-        width: 150
-        height: 170
+        x: 31
+        y: 21
+        width: 148
+        height: 166
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

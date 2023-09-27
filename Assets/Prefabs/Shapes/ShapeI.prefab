@@ -385,3 +385,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isTurn: 1
+  shapeSekil: {fileID: 21300000, guid: 2be0b01d0d8cca048ba15a2ca4a0686e, type: 3}

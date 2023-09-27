@@ -8,6 +8,8 @@ public class ShapeManager : MonoBehaviour
     [SerializeField]
     private bool isTurn=true;
 
+    public Sprite shapeSekil; //spawnermanagerdan cagrilabilecek sekilleri eklemek icin
+
     public void LeftMove()
     {
         transform.Translate(Vector3.left,Space.World);
