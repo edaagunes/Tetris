@@ -47,6 +47,8 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
+        //Hafizadaki ses ayarini kullan ve burayi guncelle
+        musicSource.volume = PlayerPrefs.GetFloat("musicVolume");
         musicSource.clip = musicClip;
         musicSource.Play();
     }
@@ -78,6 +80,8 @@ public class SoundManager : MonoBehaviour
     {
         if (isEffectRun && whichSound < soundEffects.Length)
         {
+            soundEffects[whichSound].volume = PlayerPrefs.GetFloat("FxVolume");
+            
             soundEffects[whichSound].Stop();
             soundEffects[whichSound].Play();
         }
